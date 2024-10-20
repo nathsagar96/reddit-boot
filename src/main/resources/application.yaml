@@ -1,3 +1,37 @@
 spring:
   application:
     name: reddit-boot
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reddit
+    username: postgres
+    password: postgres
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  output:
+    ansi:
+      enabled: always
+  mail:
+    host: localhost
+    port: 1025
+    username: reddit-boot
+    password: reddit-boot
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+server:
+  port: 8080
+  shutdown: graceful
+
+jwt:
+  secret: a202c39c5ec34420c3afc31d9d90a0c7b40c8f9b2897e256e57a5d40a0fb6ecf7c478be41e2af29958cb77e521cb1851a8924f9732ca33ae83545731f8dbc656b6ce3443c4afcf19e525a7eec270f32c9a2340e890b800128677823f15a33118bfdea4565b365667932e7c039abdd30f274b3e1b50ff3904883629cbe7138be56c4f8210219cf2961fd9b5a0c03214d559eab41e19a26a819bc5976addfba5b0c164401bae5072fe1d50d54ecfa7026b4b1e7c10c5577bd42ddeee70ef247d231b5417c4da60cfcba93014211b8483dd96bd6424cf677c8e5a5e7b5ebfa5c293288ae13f5403d58f41297278364ae9b96303c2ffb34c001d8c4c069ffc87c0da
+  expiration: 3600000
