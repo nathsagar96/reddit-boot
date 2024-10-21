@@ -8,14 +8,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Setter
@@ -33,9 +37,24 @@ public class Subreddit {
 
   private String description;
 
+  @CreationTimestamp
+  @Column(nullable = false, updatable = false)
+  private Instant createdAt;
+
   @OneToMany(mappedBy = "subreddit")
   private List<Post> posts;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private User user;
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "subreddit_admin",
+      joinColumns = @JoinColumn(name = "subreddit_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
+  private List<User> admins;
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "subreddit_user",
+      joinColumns = @JoinColumn(name = "subreddit_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
+  private List<User> subscribers;
 }
