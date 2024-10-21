@@ -1,6 +1,8 @@
 package dev.sagar.reddit.comment;
 
+import dev.sagar.reddit.vote.VoteType;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,14 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
 public class CommentController {
 
   private final CommentService commentService;
+  private final CommentVoteService commentVoteService;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -49,5 +50,14 @@ public class CommentController {
   @ResponseStatus(HttpStatus.OK)
   public List<CommentDto> getCommentsByPost(@RequestParam final Long postId) {
     return commentService.getCommentsByPost(postId);
+  }
+
+  @PostMapping("/{commentId}/vote")
+  @ResponseStatus(HttpStatus.OK)
+  public String voteOnComment(
+      @PathVariable final Long commentId,
+      @RequestParam final String username,
+      @RequestParam VoteType voteType) {
+    return commentVoteService.voteOnComment(commentId, username, voteType);
   }
 }
