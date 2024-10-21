@@ -1,8 +1,7 @@
 package dev.sagar.reddit.post;
 
-import dev.sagar.reddit.comment.Comment;
-import dev.sagar.reddit.comment.CommentDto;
-import dev.sagar.reddit.comment.CommentService;
+import dev.sagar.reddit.vote.VoteType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
   private final PostService postService;
-  private final CommentService commentService;
+  private final PostVoteService postVoteService;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @SecurityRequirement(name = "bearerAuth")
   public PostDto createPost(
       @Valid @RequestBody PostDto postDto, @RequestParam final String username) {
     return postService.createPost(postDto, username);
@@ -53,6 +53,7 @@ public class PostController {
 
   @PutMapping("/{postId}")
   @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "bearerAuth")
   public PostDto editPost(
       @PathVariable final Long postId,
       @Valid @RequestBody PostDto postDto,
@@ -62,7 +63,18 @@ public class PostController {
 
   @DeleteMapping("/{postId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @SecurityRequirement(name = "bearerAuth")
   public void deletePost(@PathVariable final Long postId, @RequestParam final String username) {
     postService.deletePost(postId, username);
+  }
+
+  @PostMapping("/{postId}/vote")
+  @ResponseStatus(HttpStatus.CREATED)
+  @SecurityRequirement(name = "bearerAuth")
+  public String voteOnPost(
+      @PathVariable final Long postId,
+      @RequestParam final String username,
+      @RequestParam VoteType voteType) {
+    return postVoteService.vote(postId, username, voteType);
   }
 }

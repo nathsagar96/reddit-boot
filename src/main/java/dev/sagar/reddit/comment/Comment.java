@@ -51,6 +51,5 @@ public class Comment {
   @JoinColumn(name = "parent_comment_id", referencedColumnName = "id")
   private Comment parentComment;
 
-  @Builder.Default
-  private int voteCount = 0;
+  @Builder.Default private int voteCount = 0;
 }

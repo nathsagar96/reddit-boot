@@ -34,10 +34,14 @@ public class SubredditService {
   }
 
   public String addAdmin(Long subredditId, String username) {
-    Subreddit subreddit = subredditRepository.findById(subredditId)
+    Subreddit subreddit =
+        subredditRepository
+            .findById(subredditId)
             .orElseThrow(() -> new RuntimeException("Subreddit not found"));
 
-    User user = userRepository.findByUsername(username)
+    User user =
+        userRepository
+            .findByUsername(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
     // Add the user as an admin if they're not already an admin
@@ -50,10 +54,14 @@ public class SubredditService {
   }
 
   public String removeAdmin(Long subredditId, String username) {
-    Subreddit subreddit = subredditRepository.findById(subredditId)
+    Subreddit subreddit =
+        subredditRepository
+            .findById(subredditId)
             .orElseThrow(() -> new RuntimeException("Subreddit not found"));
 
-    User user = userRepository.findByUsername(username)
+    User user =
+        userRepository
+            .findByUsername(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
     // Remove the user from admins if they are currently an admin
@@ -62,7 +70,6 @@ public class SubredditService {
 
     return "Admin removed successfully";
   }
-
 
   public List<SubredditDto> getAllSubreddits() {
     return subredditRepository.findAll().stream().map(this::toDto).toList();

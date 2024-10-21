@@ -9,7 +9,7 @@ import lombok.Builder;
 @Builder
 public record RegisterRequest(
     @NotBlank(message = "Username is required") String username,
-    @NotBlank(message = "Email is required") @Email String email,
+    @NotBlank(message = "Email is required") @Email(message = "Invalid email format") String email,
     @NotBlank(message = "Password is required")
         @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",

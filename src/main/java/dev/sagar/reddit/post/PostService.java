@@ -40,9 +40,7 @@ public class PostService {
   }
 
   public List<PostDto> getPostsBySubreddit(Long subredditId) {
-    return postRepository.findAllBySubredditId(subredditId).stream()
-        .map(this::toDto)
-        .toList();
+    return postRepository.findAllBySubredditId(subredditId).stream().map(this::toDto).toList();
   }
 
   public List<PostDto> getPostsByUser(Long userId) {

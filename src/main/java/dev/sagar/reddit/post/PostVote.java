@@ -1,7 +1,7 @@
-package dev.sagar.reddit.vote;
+package dev.sagar.reddit.post;
 
-import dev.sagar.reddit.post.Post;
 import dev.sagar.reddit.user.User;
+import dev.sagar.reddit.vote.VoteType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "votes")
-public class Vote {
+public class PostVote {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

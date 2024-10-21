@@ -9,5 +9,5 @@ import lombok.Builder;
 public record CommentDto(
     Long id,
     @NotBlank(message = "Text is required") String text,
-    Long postId,
+    @NotBlank(message = "Post ID is required") Long postId,
     Long parentCommentId) {}

@@ -1,6 +1,7 @@
 package dev.sagar.reddit.comment;
 
 import dev.sagar.reddit.vote.VoteType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class CommentController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @SecurityRequirement(name = "bearerAuth")
   public CommentDto createComment(
       @Valid @RequestBody CommentDto commentDto, @RequestParam final String username) {
     return commentService.createComment(commentDto, username);
@@ -33,6 +35,7 @@ public class CommentController {
 
   @PutMapping("/{commentId}")
   @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "bearerAuth")
   public CommentDto editComment(
       @PathVariable final Long commentId,
       @Valid @RequestBody CommentDto commentDto,
@@ -42,11 +45,12 @@ public class CommentController {
 
   @DeleteMapping("/{commentId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @SecurityRequirement(name = "bearerAuth")
   public void deleteComment(@PathVariable final Long commentId, @RequestParam String username) {
     commentService.deleteComment(commentId, username);
   }
 
-  @GetMapping("/{postId}")
+  @GetMapping("/by-post/{postId}")
   @ResponseStatus(HttpStatus.OK)
   public List<CommentDto> getCommentsByPost(@RequestParam final Long postId) {
     return commentService.getCommentsByPost(postId);
@@ -54,6 +58,7 @@ public class CommentController {
 
   @PostMapping("/{commentId}/vote")
   @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "bearerAuth")
   public String voteOnComment(
       @PathVariable final Long commentId,
       @RequestParam final String username,

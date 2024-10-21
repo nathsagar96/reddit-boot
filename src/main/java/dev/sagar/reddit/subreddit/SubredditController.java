@@ -1,5 +1,6 @@
 package dev.sagar.reddit.subreddit;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class SubredditController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @SecurityRequirement(name = "bearerAuth")
   public SubredditDto createSubreddit(
       @RequestBody SubredditDto subredditDto, @RequestParam final String username) {
     return subredditService.createSubreddit(subredditDto, username);
@@ -31,10 +33,10 @@ public class SubredditController {
     return subredditService.getAllSubreddits();
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{subredditId}")
   @ResponseStatus(HttpStatus.OK)
-  public SubredditDto getSubredditById(@PathVariable final Long id) {
-    return subredditService.getSubredditById(id);
+  public SubredditDto getSubredditById(@PathVariable final Long subredditId) {
+    return subredditService.getSubredditById(subredditId);
   }
 
   @GetMapping("/name/{name}")
@@ -42,25 +44,35 @@ public class SubredditController {
     return subredditService.getSubredditByName(name);
   }
 
-  @PostMapping("/{id}/join")
+  @PostMapping("/{subredditId}/join")
   @ResponseStatus(HttpStatus.OK)
-  public String joinSubreddit(@PathVariable final Long id, @RequestParam final String username) {
-    return subredditService.joinSubreddit(id, username);
+  @SecurityRequirement(name = "bearerAuth")
+  public String joinSubreddit(
+      @PathVariable final Long subredditId, @RequestParam final String username) {
+    return subredditService.joinSubreddit(subredditId, username);
   }
 
-  @PostMapping("/{id}/leave")
+  @PostMapping("/{subredditId}/leave")
   @ResponseStatus(HttpStatus.OK)
-  public String leaveSubreddit(@PathVariable final Long id, @RequestParam final String username) {
-    return subredditService.leaveSubreddit(id, username);
+  @SecurityRequirement(name = "bearerAuth")
+  public String leaveSubreddit(
+      @PathVariable final Long subredditId, @RequestParam final String username) {
+    return subredditService.leaveSubreddit(subredditId, username);
   }
 
-  @PostMapping("/{id}/add-admin")
-  public String addAdmin(@PathVariable final Long id, @RequestParam final String username) {
-    return subredditService.addAdmin(id, username);
+  @PostMapping("/{subredditId}/add-admin")
+  @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "bearerAuth")
+  public String addAdmin(
+      @PathVariable final Long subredditId, @RequestParam final String username) {
+    return subredditService.addAdmin(subredditId, username);
   }
 
-  @PostMapping("/{id}/remove-admin")
-  public String removeAdmin(@PathVariable final Long id, @RequestParam final String username) {
-    return subredditService.removeAdmin(id, username);
+  @PostMapping("/{subredditId}/remove-admin")
+  @ResponseStatus(HttpStatus.OK)
+  @SecurityRequirement(name = "bearerAuth")
+  public String removeAdmin(
+      @PathVariable final Long subredditId, @RequestParam final String username) {
+    return subredditService.removeAdmin(subredditId, username);
   }
 }
