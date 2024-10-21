@@ -1,5 +1,6 @@
 package dev.sagar.reddit.subreddit;
 
+import dev.sagar.reddit.exception.ResourceNotFoundException;
 import dev.sagar.reddit.user.User;
 import dev.sagar.reddit.user.UserRepository;
 import java.util.List;
@@ -18,7 +19,8 @@ public class SubredditService {
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     Subreddit subreddit =
         Subreddit.builder()
@@ -37,12 +39,14 @@ public class SubredditService {
     Subreddit subreddit =
         subredditRepository
             .findById(subredditId)
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Subreddit not found with id: " + subredditId));
 
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     // Add the user as an admin if they're not already an admin
     if (!subreddit.getAdmins().contains(user)) {
@@ -57,12 +61,14 @@ public class SubredditService {
     Subreddit subreddit =
         subredditRepository
             .findById(subredditId)
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Subreddit not found with id: " + subredditId));
 
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     // Remove the user from admins if they are currently an admin
     subreddit.getAdmins().remove(user);
@@ -79,7 +85,7 @@ public class SubredditService {
     Subreddit subreddit =
         subredditRepository
             .findById(id)
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Subreddit not found with id: " + id));
     return toDto(subreddit);
   }
 
@@ -87,7 +93,8 @@ public class SubredditService {
     Subreddit subreddit =
         subredditRepository
             .findByName(name)
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Subreddit not found with name: " + name));
     return toDto(subreddit);
   }
 
@@ -96,12 +103,14 @@ public class SubredditService {
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     Subreddit subreddit =
         subredditRepository
             .findById(subredditId)
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Subreddit not found with id: " + subredditId));
 
     if (!subreddit.getSubscribers().contains(user)) {
       subreddit.getSubscribers().add(user);
@@ -115,12 +124,14 @@ public class SubredditService {
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     Subreddit subreddit =
         subredditRepository
             .findById(subredditId)
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Subreddit not found with id: " + subredditId));
 
     subreddit.getSubscribers().remove(user);
     subredditRepository.save(subreddit);

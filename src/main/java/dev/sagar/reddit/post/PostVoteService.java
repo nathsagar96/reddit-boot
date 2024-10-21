@@ -1,5 +1,7 @@
 package dev.sagar.reddit.post;
 
+import dev.sagar.reddit.exception.DuplicateVoteException;
+import dev.sagar.reddit.exception.ResourceNotFoundException;
 import dev.sagar.reddit.user.UserRepository;
 import dev.sagar.reddit.vote.VoteType;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +21,18 @@ public class PostVoteService {
     var user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     var post =
-        postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        postRepository
+            .findById(postId)
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
 
     var existingVote = postVoteRepository.findByPostAndUser(post, user);
 
     if (existingVote.isPresent()) {
-      throw new RuntimeException("You have already voted on this post");
+      throw new DuplicateVoteException("You have already voted on this post");
     }
 
     PostVote postVote = PostVote.builder().voteType(voteType).post(post).user(user).build();

@@ -1,6 +1,8 @@
 package dev.sagar.reddit.auth;
 
 import dev.sagar.reddit.email.EmailService;
+import dev.sagar.reddit.exception.InvalidTokenException;
+import dev.sagar.reddit.exception.ResourceNotFoundException;
 import dev.sagar.reddit.user.PasswordResetToken;
 import dev.sagar.reddit.user.PasswordResetTokenRepository;
 import dev.sagar.reddit.user.User;
@@ -27,7 +29,8 @@ public class PasswordResetService {
         userRepository
             .findByEmail(request.email())
             .orElseThrow(
-                () -> new RuntimeException("User not found with email: " + request.email()));
+                () ->
+                    new ResourceNotFoundException("User not found with email: " + request.email()));
 
     String token = generateAndSavePasswordResetToken(user);
     emailService.sendResetPasswordEmail(user.getEmail(), token);
@@ -39,12 +42,15 @@ public class PasswordResetService {
     PasswordResetToken resetToken =
         resetTokenRepository
             .findByToken(request.token())
-            .orElseThrow(() -> new RuntimeException("Invalid Token"));
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Token not found with token: " + request.token()));
 
     if (resetToken.getExpiresAt().isBefore(Instant.now())) {
       String newToken = generateAndSavePasswordResetToken(resetToken.getUser());
       emailService.sendResetPasswordEmail(resetToken.getUser().getEmail(), newToken);
-      throw new RuntimeException("Token has expired. New token has been sent to your email");
+      throw new InvalidTokenException("Token has expired. New token has been sent to your email");
     }
 
     User user = resetToken.getUser();

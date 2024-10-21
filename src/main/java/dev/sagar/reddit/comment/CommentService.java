@@ -1,5 +1,7 @@
 package dev.sagar.reddit.comment;
 
+import dev.sagar.reddit.exception.ResourceNotFoundException;
+import dev.sagar.reddit.exception.UnauthorizedException;
 import dev.sagar.reddit.post.Post;
 import dev.sagar.reddit.post.PostRepository;
 import dev.sagar.reddit.user.User;
@@ -22,19 +24,26 @@ public class CommentService {
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     Post post =
         postRepository
             .findById(commentDto.postId())
-            .orElseThrow(() -> new RuntimeException("Post not found"));
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Post not found with id: " + commentDto.postId()));
 
     Comment parentComment = null;
     if (commentDto.parentCommentId() != null) {
       parentComment =
           commentRepository
               .findById(commentDto.parentCommentId())
-              .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+              .orElseThrow(
+                  () ->
+                      new ResourceNotFoundException(
+                          "Comment not found with id: " + commentDto.parentCommentId()));
     }
 
     Comment comment =
@@ -58,10 +67,11 @@ public class CommentService {
     Comment comment =
         commentRepository
             .findById(commentId)
-            .orElseThrow(() -> new RuntimeException("Comment not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Comment not found with id: " + commentId));
 
     if (!comment.getUser().getUsername().equals(username)) {
-      throw new RuntimeException("You do not have permission to update this comment");
+      throw new UnauthorizedException("You do not have permission to update this comment");
     }
 
     comment.setText(commentDto.text());
@@ -74,10 +84,11 @@ public class CommentService {
     Comment comment =
         commentRepository
             .findById(commentId)
-            .orElseThrow(() -> new RuntimeException("Comment not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Comment not found with id: " + commentId));
 
     if (!comment.getUser().getUsername().equals(username)) {
-      throw new RuntimeException("You do not have permission to delete this comment");
+      throw new UnauthorizedException("You do not have permission to delete this comment");
     }
 
     commentRepository.delete(comment);

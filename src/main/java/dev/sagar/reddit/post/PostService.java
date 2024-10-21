@@ -1,5 +1,7 @@
 package dev.sagar.reddit.post;
 
+import dev.sagar.reddit.exception.ResourceNotFoundException;
+import dev.sagar.reddit.exception.UnauthorizedException;
 import dev.sagar.reddit.subreddit.SubredditRepository;
 import dev.sagar.reddit.user.UserRepository;
 import java.util.List;
@@ -20,12 +22,16 @@ public class PostService {
     var user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     var subreddit =
         subredditRepository
             .findById(postDto.subredditId())
-            .orElseThrow(() -> new RuntimeException("Subreddit not found"));
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Subreddit not found with id: " + postDto.subredditId()));
 
     Post post =
         Post.builder()
@@ -51,16 +57,18 @@ public class PostService {
     return postRepository
         .findById(postId)
         .map(this::toDto)
-        .orElseThrow(() -> new RuntimeException("Post not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
   }
 
   @Transactional
   public void deletePost(Long postId, String username) {
     var post =
-        postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        postRepository
+            .findById(postId)
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
 
     if (!post.getUser().getUsername().equals(username)) {
-      throw new RuntimeException("You do not have permission to delete this post");
+      throw new UnauthorizedException("You do not have permission to delete this post");
     }
 
     postRepository.delete(post);
@@ -69,10 +77,12 @@ public class PostService {
   @Transactional
   public PostDto editPost(Long postId, PostDto postDto, String username) {
     var post =
-        postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        postRepository
+            .findById(postId)
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + postId));
 
     if (!post.getUser().getUsername().equals(username)) {
-      throw new RuntimeException("You do not have permission to edit this post");
+      throw new UnauthorizedException("You do not have permission to edit this post");
     }
 
     post.setContent(postDto.content());

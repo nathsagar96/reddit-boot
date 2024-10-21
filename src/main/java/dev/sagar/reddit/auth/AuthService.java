@@ -1,6 +1,9 @@
 package dev.sagar.reddit.auth;
 
 import dev.sagar.reddit.email.EmailService;
+import dev.sagar.reddit.exception.AlreadyExistException;
+import dev.sagar.reddit.exception.InvalidTokenException;
+import dev.sagar.reddit.exception.ResourceNotFoundException;
 import dev.sagar.reddit.user.User;
 import dev.sagar.reddit.user.UserRepository;
 import dev.sagar.reddit.user.VerificationToken;
@@ -34,6 +37,14 @@ public class AuthService {
             .password(passwordEncoder.encode(request.password()))
             .build();
 
+    if (userRepository.findByUsername(request.username()).isPresent()) {
+      throw new AlreadyExistException("Username " + request.username() + " already taken");
+    }
+
+    if (userRepository.findByEmail(request.email()).isPresent()) {
+      throw new AlreadyExistException("Email " + request.email() + " already taken");
+    }
+
     userRepository.save(user);
     String token = generateAndSaveVerificationToken(user);
     emailService.sendVerificationEmail(request.email(), token);
@@ -56,12 +67,15 @@ public class AuthService {
   @Transactional
   public String verifyAccount(String token) {
     VerificationToken savedToken =
-        tokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
+        tokenRepository
+            .findByToken(token)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Token not found with token: " + token));
 
     if (savedToken.getExpiresAt().isBefore(Instant.now())) {
       String newToken = generateAndSaveVerificationToken(savedToken.getUser());
       emailService.sendVerificationEmail(savedToken.getUser().getEmail(), newToken);
-      throw new RuntimeException("Token has expired. New token has been sent to your email");
+      throw new InvalidTokenException("Token has expired. New token has been sent to your email");
     }
 
     User user = savedToken.getUser();

@@ -1,5 +1,6 @@
 package dev.sagar.reddit.user;
 
+import dev.sagar.reddit.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,8 @@ public class UserProfileService {
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
 
     user.setBio(profileDto.bio());
 
@@ -30,7 +32,8 @@ public class UserProfileService {
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(
+                () -> new ResourceNotFoundException("User not found with username: " + username));
     return toDto(user);
   }
 
