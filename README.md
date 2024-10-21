@@ -48,7 +48,7 @@ The backend supports **user management**, **post creation**, **subreddit managem
     - Configure your database connection settings in `application.properties` or `application.yml`:
 
     ```properties
-    spring.datasource.url=jdbc:postgresql://localhost:5432/reddit_clone
+    spring.datasource.url=jdbc:postgresql://localhost:5432/reddit
     spring.datasource.username=your-username
     spring.datasource.password=your-password
     ```
